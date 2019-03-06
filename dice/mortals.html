@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>RollMortals</title>
+		<style>
+			body {
+				font-family : monospace;
+			}
+		</style>
+		</head>
+	<body>
+		<h1>RollMortals: d10 Roller for Mortals</h1>
+		<h2>Quick Roll</h2>
+		<button onclick="roll(1)">1</button>
+		<button onclick="roll(2)">2</button>
+		<button onclick="roll(3)">3</button>
+		<button onclick="roll(4)">4</button>
+		<button onclick="roll(5)">5</button>
+		<button onclick="roll(6)">6</button>
+		<button onclick="roll(7)">7</button>
+		<button onclick="roll(8)">8</button>
+		<button onclick="roll(9)">9</button>
+		<button onclick="roll(10)">10</button>
+		<br>
+		<h2>Results</h2>
+		Dice rolled: <span id="Rolled">None yet</span></br>
+		Rolls: <span id="Rolls">None yet</span></br>
+		1 : <span id="Quant1">None yet</span></br>
+		2 : <span id="Quant2">None yet</span></br>
+		3 : <span id="Quant3">None yet</span></br>
+		4 : <span id="Quant4">None yet</span></br>
+		5 : <span id="Quant5">None yet</span></br>
+		6 : <span id="Quant6">None yet</span></br>
+		7 : <span id="Quant7">None yet</span></br>
+		8 : <span id="Quant8">None yet</span></br>
+		9 : <span id="Quant9">None yet</span></br>
+		10: <span id="Quant10">None yet</span></br>
+		Successes (Dif 7): <span id="Succ7">None yet</span></br>
+		<script>
+			var rolledDisplay = document.getElementById("Rolled");
+			var rolls;
+			var rollsDisplay = document.getElementById("Rolls");
+			var quants = [];
+			var quantDisplays = [];
+			var succ7;
+			var succ7Display = document.getElementById("Succ7");
+			for (var i = 1; i <= 10; i++) {
+				quantDisplays[i] = document.getElementById("Quant" + i);
+			}
+			function roll(num) {
+				rolledDisplay.innerHTML = num;
+				rolls = [];
+				for (var i = 1; i <= 10; i++) {
+					quants[i] = 0;
+					quantDisplays[i].innerHTML = "";
+				}
+				succ7 = 0;
+				rollsDisplay.innerHTML = "";
+				for (var i = 0; i < num; i++) {
+					var roll = Math.floor(Math.random()*10) + 1;
+					rolls[i] = roll;
+					rollsDisplay.innerHTML += rolls[i] + (i < num-1 ? ", " : "");
+					quants[roll] ++;
+					quantDisplays[roll].innerHTML += "X";
+					if (roll >= 10)
+						succ7 += 2;
+					else if (roll >= 7)
+						succ7 ++;
+				}
+				succ7Display.innerHTML = succ7;
+				for (var i = 1; i <= 10; i++) {
+					if (quants[i] >= 2)
+						quantDisplays[i].innerHTML += " " + quants[i];
+				}
+			}
+		</script>
+	</body>
+</html>
