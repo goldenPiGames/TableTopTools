@@ -9,9 +9,11 @@
 				font-family : monospace;
 			}
 		</style>
-		</head>
+		<script type="text/javascript" src="d.js"></script>
+	</head>
 	<body>
-		<h1>RollMortals: d10 Roller for Mortals</h1>
+		<a href="../">Home</a>
+		<h1>RollMortals</h1>
 		<h2>Quick Roll</h2>
 		<button onclick="roll(1)">1</button>
 		<button onclick="roll(2)">2</button>
@@ -59,7 +61,7 @@
 				succ7 = 0;
 				rollsDisplay.innerHTML = "";
 				for (var i = 0; i < num; i++) {
-					var roll = Math.floor(Math.random()*10) + 1;
+					var roll = d(10);
 					rolls[i] = roll;
 					rollsDisplay.innerHTML += rolls[i] + (i < num-1 ? ", " : "");
 					quants[roll] ++;

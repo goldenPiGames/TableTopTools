@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>dCommand</title>
+		<style>
+			body {
+				font-family : monospace;
+				background-color : #BBBBBB;
+				color : #000000;
+			}
+			#Log {
+				overflow:auto;
+				height: 400px;
+				color : #FFFFFF;
+				background-color: #000000;
+				border-color: #BBBBBB;
+				border-style: solid;
+				border-width: 0px;
+			}
+			#In {
+				color : #FFFFFF;
+				background-color: #000000;
+			}
+			.error {
+				color : #FF0000;
+			}
+			.eg {
+				color : #FFFFFF;
+				background-color: #000000;
+			}
+		</style>
+		<script type="text/javascript" src="d.js"></script>
+	</head>
+	<body>
+		<a href="../">Home</a>
+		<h1>dCommand</h1>
+		<div id="Log">
+		</div>
+		<input id="In" type="text" autofocus />
+		<script>
+			var inl = document.getElementById("In");
+			var log = document.getElementById("Log");
+			var pastLines = [];
+			var pastIndex = 0;
+			var debug
+			inl.addEventListener("keydown", function(e) {
+				if (e.key == "Enter") {
+					e.preventDefault();
+					doLine();
+				} else if (e.key == "ArrowUp") {
+					e.preventDefault();
+					if (pastIndex > 0)
+						pastIndex--;
+					pastRecall();
+				} else if (e.key == "ArrowDown") {
+					e.preventDefault();
+					pastIndex++;
+					pastRecall();
+				}
+			});
+			function doLine() {
+				println();
+				var line = inl.value;
+				inl.value = "";
+				if (line != pastLines[pastLines.length-1])
+					pastLines.push(line);
+				pastIndex = pastLines.length;
+				println("> "+line);
+				try {
+					println(parseRoll(line));
+				} catch (e) {
+					println('<span class="error">Error: Input not parsed</span>');
+				}
+				log.scrollTop = log.scrollHeight;
+			}
+			function parseRoll(line) {
+				var ddex = line.indexOf("d");
+				if (ddex >= 0) {
+					var num, sides, con;
+					var numstr = line.substring(0, ddex);
+					if (numstr == "") {
+						num = 1;
+					} else {
+						num = parseInt(numstr);
+						if (num != num)
+							throw "n";
+					}
+					var condex = line.search(/[+\-]/g);
+					var sidstr;
+					if (condex >= 0) {
+						sidestr = line.substring(ddex+1, condex);
+						con = parseInt(line.substring(condex));
+					} else {
+						sidestr = line.substring(ddex+1);
+						con = 0;
+					}
+					if (sidestr == "%") {
+						sides = 100;
+					} else if (sidestr == "F") {
+						sides = 3;
+						con -= 2*num;
+					} else {
+						sides = parseInt(sidestr);
+					}
+					if (sides != sides)
+						throw "s";
+					//console.log(condex, con)
+					return fullRoll(num, sides, con);
+				} else {
+					var mod = parseInt(line)
+					if (mod != mod)
+						throw "20";
+					return fullRoll(1, 20, mod);
+				}
+			}
+			function fullRoll(n, s, c) {
+				var rolls = [];
+				var total = c;
+				for (var i = 0; i < n; i++) {
+					var roll = d(s);
+					rolls.push(roll);
+					total += roll;
+				}
+				var message = total + "  ("+rolls[0];
+				for (var i = 1; i < rolls.length; i++) {
+					message += ", " + rolls[i];
+				}
+				message += ")";
+				return message;
+			}
+			function pastRecall() {
+				if (pastIndex >= pastLines.length) {
+					inl.value = "";
+					pastIndex = pastLines.length;
+				} else {
+					inl.value = pastLines[pastIndex];
+				}
+			}
+			function print(val = "") {
+				Log.innerHTML += val;
+			}
+			function println(val = "") {
+				Log.innerHTML += val + "<br>";
+			}
+		</script>
+		<div class="help">
+			<h2>Help</h2>
+			<p>Type in what you want to roll and press Enter.</p>
+			<ul>
+				<li><span class="eg">5d6</span> rolls 5d6</li>
+				<li><span class="eg">2d6+9</span> rolls 2d6+9</li>
+				<li><span class="eg">d8</span> rolls 1d8</li>
+				<li><span class="eg">+9</span> rolls 1d20+9</li>
+				<li><span class="eg">d%</span> rolls percentile dice (d100)</li>
+				<li><span class="eg">dF</span> rolls Fudge dice (actually d3-2, but it works out the same)</li>
+			</ul>
+			<p>Press the up and down arrow keys to navigate previous inputs.</p>
+		</div>
+	</body>
+</html>
