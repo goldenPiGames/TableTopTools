@@ -46,6 +46,7 @@
 			var pastIndex = 0;
 			var debug
 			inl.addEventListener("keydown", function(e) {
+				//console.log("yeyh")
 				if (e.key == "Enter") {
 					e.preventDefault();
 					doLine();
@@ -71,11 +72,22 @@
 				try {
 					println(parseRoll(line));
 				} catch (e) {
+					console.log(e)
 					println('<span class="error">Error: Input not parsed</span>');
 				}
 				log.scrollTop = log.scrollHeight;
 			}
 			function parseRoll(line) {
+				var difdex = line.indexOf("dif");
+				console.log(difdex);
+				if (difdex >= 0) {
+					console.log("a")
+					var num = parseInt(line.substring(0, difdex));
+					console.log("b")
+					var dif = parseInt(line.substring(difdex+3));
+					console.log("c")
+					return fullWWRoll(num, dif);
+				}
 				var ddex = line.indexOf("d");
 				if (ddex >= 0) {
 					var num, sides, con;
@@ -129,6 +141,27 @@
 				}
 				message += ")";
 				return message;
+				console.log(message);
+			}
+			function fullWWRoll(n, dif) {
+				console.log(n, dif);
+				var rolls = [];
+				var succ = 0;
+				for (var i = 0; i < n; i++) {
+					var roll = d(10);
+					rolls.push(roll);
+					if (roll >= 10 && dif < 10) {
+						succ += 2;
+					} else if (roll >= dif) {
+						succ += 1;
+					}
+				}
+				var message = succ + "  successes ("+rolls[0];
+				for (var i = 1; i < rolls.length; i++) {
+					message += ", " + rolls[i];
+				}
+				message += ")";
+				return message;
 			}
 			function pastRecall() {
 				if (pastIndex >= pastLines.length) {
@@ -155,6 +188,8 @@
 				<li><span class="eg">+9</span> rolls 1d20+9</li>
 				<li><span class="eg">d%</span> rolls percentile dice (d100)</li>
 				<li><span class="eg">dF</span> rolls Fudge dice (actually d3-2, but it works out the same)</li>
+				<li><span class="eg">8dif7</span> rolls 8 d10s, counting each 7 or higher as a success and each 10 as a double success</li>
+				<li><span class="eg">3dif10</span> rolls 3 d10s, counting each 10 as a success</li>
 			</ul>
 			<p>Press the up and down arrow keys to navigate previous inputs.</p>
 		</div>
