@@ -79,13 +79,13 @@
 			}
 			function parseRoll(line) {
 				var difdex = line.indexOf("dif");
-				console.log(difdex);
+				//console.log(difdex);
 				if (difdex >= 0) {
-					console.log("a")
+					//console.log("a")
 					var num = parseInt(line.substring(0, difdex));
-					console.log("b")
+					//console.log("b")
 					var dif = parseInt(line.substring(difdex+3));
-					console.log("c")
+					//console.log("c")
 					return fullWWRoll(num, dif);
 				}
 				var ddex = line.indexOf("d");
@@ -144,9 +144,10 @@
 				console.log(message);
 			}
 			function fullWWRoll(n, dif) {
-				console.log(n, dif);
+				//console.log(n, dif);
 				var rolls = [];
 				var succ = 0;
+				var botch = 0;
 				for (var i = 0; i < n; i++) {
 					var roll = d(10);
 					rolls.push(roll);
@@ -154,9 +155,21 @@
 						succ += 2;
 					} else if (roll >= dif) {
 						succ += 1;
+					} else if (roll <= 1) {
+						botch += 1;
 					}
 				}
-				var message = succ + "  successes ("+rolls[0];
+				var message = "";
+				if (succ > 0) {
+					message += succ + " success";
+					if (succ != 1)
+						message += "es";
+				} else {
+					message += botch + " botch";
+					if (botch != 1)
+						message += "es";
+				}
+				message += " ("+rolls[0];
 				for (var i = 1; i < rolls.length; i++) {
 					message += ", " + rolls[i];
 				}
